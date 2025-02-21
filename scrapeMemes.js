@@ -4,14 +4,17 @@ const fs = require("fs");
 const axios = require("axios");
 const path = require("path");
 const ffmpeg = require("fluent-ffmpeg");
+const ffmpegPath = require("@ffmpeg-installer/ffmpeg").path;
+
+// Set the FFmpeg path to use the installed binary
+ffmpeg.setFfmpegPath(ffmpegPath);
 
 const APIFY_TOKEN = process.env.APIFY_TOKEN;
 const INSTAGRAM_SESSION_ID = process.env.INSTAGRAM_SESSION_ID;
 
 // List of Instagram pages to scrape memes from
 const INSTAGRAM_USERNAMES = [
-    "dank.memes", "sarcasm_only",
-     "fuckjerry",
+    "dank.memes", "sarcasm_only", "fuckjerry"
 ];
 
 // ✅ Scrape Instagram Reels
@@ -109,7 +112,7 @@ async function muteAudio(videoPath) {
     return new Promise((resolve, reject) => {
         const mutedFilePath = videoPath.replace(".mp4", "_muted.mp4");
 
-        ffmpeg(videoPath.replace(/\\/g, "/")) // Ensure path format works for FFmpeg
+        ffmpeg(videoPath.replace(/\\/g, "/")) // Normalize path
             .noAudio()
             .output(mutedFilePath)
             .on("end", () => {
